@@ -1,5 +1,5 @@
 {
-  "name": "storyline-viewer-app",
+  "name": "storyline-viewer-api",
   "version": "0.0.1",
   "description": "Storyline Viewer App",
   "main": "server.js",
