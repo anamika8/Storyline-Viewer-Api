@@ -1,0 +1,40 @@
+{
+  "name": "storyline-viewer-app",
+  "version": "0.0.1",
+  "description": "Storyline Viewer App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "mocha"
+  },
+  "keywords": [
+    "node",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3",
+    "morgan": "^1.9.1",
+    "uuid": "^3.2.1",
+    "mongoose": "^5.0.13",
+    "extend": ">=3.0.2",
+    "bcryptjs": "^2.4.0",
+    "body-parser": "^1.15.2",
+    "dotenv": "^4.0.0",
+    "jsonwebtoken": "^8.2.0",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1",
+    "passport-local": "^1.0.0",
+    "hoek": ">=4.2.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "mocha": "^5.2.0",
+    "faker": "^3.1.0",
+    "extend": ">=3.0.2",
+    "hoek": ">=4.2.1",
+    "lodash": ">=4.17.13"
+  }
+}
