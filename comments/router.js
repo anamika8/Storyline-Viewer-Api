@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 // but its better to make Mongoose use built in es6 promises
 mongoose.Promise = global.Promise;
 
-const { Story } = require("../storys/models");
+const { Writing } = require("../writings/models");
 const { User } = require("../users/models");
 const { Comment } = require("./models");
 
@@ -30,9 +30,9 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  Story.findById(req.params.id).then(storys => {
-    if (storys) {
-      Comment.find({ story: storys._id }).then(comments => {
+  Writing.findById(req.params.id).then(writings => {
+    if (writings) {
+      Comment.find({ writing: writings._id }).then(comments => {
         res.json({
           comments: comments.map(comment => comment.serialize())
         });
@@ -47,7 +47,7 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
   console.log(req.body);
-  const requiredFields = ["content", "user", "story"];
+  const requiredFields = ["content", "user", "writing"];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -60,18 +60,18 @@ router.post("/", (req, res) => {
   User.findOne({ email: req.body.user })
     .then(user => {
       if (user) {
-        Story.findOne({ _id: req.body.story }).then(story => {
-          if (story) {
+        Writing.findOne({ _id: req.body.writing }).then(writing => {
+          if (writing) {
             Comment.create({
               content: req.body.content,
               user: user._id,
-              story: story._id
+              writing: writing._id
             })
-              // comment - {_id, content, user, story}
+              // comment - {_id, content, user, writing}
               // res.status(201).json(comment.serialize())
-              // { _id:132343, content:'Hello", user: 124141, story: 124112}
+              // { _id:132343, content:'Hello", user: 124141, writing: 124112}
               .then(comment => Comment.findOne({ _id: comment._id }))
-              // { _id:132343, content:'Hello", user: {_id,username,email}, story: {_id,title,}}
+              // { _id:132343, content:'Hello", user: {_id,username,email}, writing: {_id,title,}}
               .then(comment => res.status(201).json(comment.serialize()));
           } else {
             const message = `Posts does not exist`;

@@ -4,7 +4,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 
 const { app, runServer, closeServer } = require("../server");
-const { Story } = require("../storys");
+const { Writing } = require("../writings");
 const { User } = require("../users");
 const { Comment } = require("../comments");
 const { TEST_DATABASE_URL } = require("../config");
@@ -36,9 +36,9 @@ describe("Comment section", function() {
   }
 
   /**
-   * Seeding storys data
+   * Seeding writings data
    */
-  function seedStorysData() {
+  function seedWritingsData() {
     const seedData = [];
     for (let i = 0; i <= 1; i++) {
       seedData.push({
@@ -47,7 +47,7 @@ describe("Comment section", function() {
       });
     }
     // this will return a promise
-    Story.insertMany(seedData);
+    Writing.insertMany(seedData);
     return seedData;
   }
 
@@ -57,7 +57,7 @@ describe("Comment section", function() {
   function seedCommentsData() {
     // first create fake users data
     const userSeedData = seedUsersData();
-    const storysSeedData = seedStorysData();
+    const writingsSeedData = seedWritingsData();
     const seedData = [];
     for (let i = 0; i <= 1; i++) {
       seedData.push({
@@ -65,8 +65,8 @@ describe("Comment section", function() {
         content: faker.lorem.text(),
         // using the user seed data's _id value
         user: userSeedData[i]._id,
-        // using the story seed data's _id value
-        story: storysSeedData[i]._id
+        // using the writing seed data's _id value
+        writing: writingsSeedData[i]._id
       });
     }
     return Comment.insertMany(seedData);
@@ -143,7 +143,7 @@ describe("Comment section", function() {
   });
 
   describe("POST endpoint", function() {
-    it("user should be able to add a comment to its own story", function() {
+    it("user should be able to add a comment to its own writing", function() {
       const newUser = {
         email: faker.internet.email(),
         firstName: faker.name.firstName(),
@@ -153,19 +153,19 @@ describe("Comment section", function() {
 
       User.insertMany(newUser);
 
-      const newStory = {
+      const newWriting = {
         title: faker.lorem.sentence(),
         _id: mongoose.Types.ObjectId()
       };
 
-      Story.insertMany(newStory);
+      Writing.insertMany(newWriting);
 
       const newComment = {
         content: faker.lorem.text(),
         // using the user seed data's _id value
         user: newUser.email,
-        // using the story seed data's _id value
-        story: newStory._id
+        // using the writing seed data's _id value
+        writing: newWriting._id
       };
 
       //console.log(newComment);
@@ -192,7 +192,7 @@ describe("Comment section", function() {
         });
     });
 
-    it("a different user should be able to add a comment in story", function() {
+    it("a different user should be able to add a comment in writing", function() {
       // user who will make the comment
       const userGivingComment = {
         email: faker.internet.email(),
@@ -202,30 +202,30 @@ describe("Comment section", function() {
       };
 
       User.insertMany(userGivingComment);
-      // user will create the story post
-      const userWritingStory = {
+      // user will create the writing post
+      const userWritingWriting = {
         email: faker.internet.email(),
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         password: faker.internet.password()
       };
 
-      User.insertMany(userWritingStory);
+      User.insertMany(userWritingWriting);
 
-      const newStory = {
+      const newWriting = {
         title: faker.lorem.sentence(),
         _id: mongoose.Types.ObjectId(),
-        user: userWritingStory._id
+        user: userWritingWriting._id
       };
 
-      Story.insertMany(newStory);
+      Writing.insertMany(newWriting);
 
       const newComment = {
         content: faker.lorem.text(),
         // using the user seed data's _id value
         user: userGivingComment.email,
-        // using the story seed data's _id value
-        story: newStory._id
+        // using the writing seed data's _id value
+        writing: newWriting._id
       };
 
       //console.log(newComment);

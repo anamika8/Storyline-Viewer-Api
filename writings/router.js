@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 // but its better to make Mongoose use built in es6 promises
 mongoose.Promise = global.Promise;
 
-const { Story } = require("./models");
+const { Writing } = require("./models");
 const { User } = require("../users/models");
 
 const router = express.Router();
@@ -16,13 +16,13 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 router.get("/", (req, res) => {
-  // Story.find().sort({posted:-1}).limit(10)
-  Story.find()
+  // Writing.find().sort({posted:-1}).limit(10)
+  Writing.find()
     .sort({ posted: -1 })
     .limit(10)
-    .then(storys => {
+    .then(writings => {
       res.json({
-        storys: storys.map(story => story.serialize())
+        writings: writings.map(writing => writing.serialize())
       });
     })
     .catch(err => {
@@ -32,8 +32,8 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  Story.findById(req.params.id)
-    .then(story => res.json(story.serialize()))
+  Writing.findById(req.params.id)
+    .then(writing => res.json(writing.serialize()))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
@@ -55,13 +55,13 @@ router.post("/", (req, res) => {
   User.findOne({ email: req.body.user })
     .then(user => {
       if (user) {
-        Story.create({
+        Writing.create({
           title: req.body.title,
           content: req.body.content,
           user: user._id
         })
-          .then(story => Story.findOne({ _id: story._id }))
-          .then(story => res.status(201).json(story.serialize()));
+          .then(writing => Writing.findOne({ _id: writing._id }))
+          .then(writing => res.status(201).json(writing.serialize()));
       } else {
         const message = `User not found`;
         console.error(message);
@@ -92,10 +92,10 @@ router.put("/:id", (req, res) => {
       toUpdate[field] = req.body[field];
     }
   });
-  //used to keep track whenever the story will updated
+  //used to keep track whenever the writing will updated
   toUpdate.updated = Date.now();
 
-  Story
+  Writing
     // all key/value pairs in toUpdate will be updated -- that's what `$set` does
     .findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true })
     .then(updatedForum => res.status(200).json(toUpdate))
@@ -105,8 +105,8 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  Story.findByIdAndRemove(req.params.id)
-    .then(story => res.status(204).end())
+  Writing.findByIdAndRemove(req.params.id)
+    .then(writing => res.status(204).end())
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 

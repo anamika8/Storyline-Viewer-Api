@@ -4,7 +4,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 
 const { app, runServer, closeServer } = require("../server");
-const { Story } = require("../storys");
+const { Writing } = require("../writings");
 const { User } = require("../users");
 const { TEST_DATABASE_URL } = require("../config");
 
@@ -14,7 +14,7 @@ const mongoose = require("mongoose");
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-describe("Story endpoints", function() {
+describe("Writing endpoints", function() {
   /**
    * Seeding users data
    */
@@ -35,9 +35,9 @@ describe("Story endpoints", function() {
   }
 
   /**
-   * Seeding Storys data
+   * Seeding Writings data
    */
-  function seedStorysData() {
+  function seedWritingsData() {
     // first create fake users data
     const userSeedData = seedUsersData();
     const seedData = [];
@@ -50,7 +50,7 @@ describe("Story endpoints", function() {
         user: userSeedData[i]._id
       });
     }
-    return Story.insertMany(seedData);
+    return Writing.insertMany(seedData);
   }
 
   function tearDownDb() {
@@ -63,7 +63,7 @@ describe("Story endpoints", function() {
   });
 
   beforeEach(function() {
-    return seedStorysData();
+    return seedWritingsData();
   });
 
   afterEach(function() {
@@ -75,57 +75,57 @@ describe("Story endpoints", function() {
   });
 
   describe("GET endpoint", function() {
-    it("should return all existing storys", function() {
+    it("should return all existing writings", function() {
       let post;
       return chai
         .request(app)
-        .get("/api/storys")
+        .get("/api/writings")
         .then(function(_post) {
           // so subsequent .then blocks can access response object
           post = _post;
           expect(post).to.have.status(200);
           // otherwise our db seeding didn't work
-          expect(post.body.storys).to.have.lengthOf.at.least(1);
-          return Story.count();
+          expect(post.body.writings).to.have.lengthOf.at.least(1);
+          return Writing.count();
         })
         .then(function(count) {
-          expect(post.body.storys).to.have.lengthOf(count);
+          expect(post.body.writings).to.have.lengthOf(count);
         });
     });
 
-    it("should return storys with right fields", function() {
-      // Strategy: Get back all storys, and ensure they have expected keys
+    it("should return writings with right fields", function() {
+      // Strategy: Get back all writings, and ensure they have expected keys
 
-      let storyPost;
+      let writingPost;
       return chai
         .request(app)
-        .get("/api/storys")
+        .get("/api/writings")
         .then(function(post) {
           expect(post).to.have.status(200);
           expect(post).to.be.json;
-          expect(post.body.storys).to.be.a("array");
-          expect(post.body.storys).to.have.lengthOf.at.least(1);
+          expect(post.body.writings).to.be.a("array");
+          expect(post.body.writings).to.have.lengthOf.at.least(1);
 
-          post.body.storys.forEach(function(story) {
-            expect(story).to.be.a("object");
-            expect(story).to.include.keys("id", "title", "user", "content");
+          post.body.writings.forEach(function(writing) {
+            expect(writing).to.be.a("object");
+            expect(writing).to.include.keys("id", "title", "user", "content");
           });
-          storyPost = post.body.storys[0];
-          return Story.findById(storyPost.id);
+          writingPost = post.body.writings[0];
+          return Writing.findById(writingPost.id);
         })
-        .then(function(story) {
-          expect(storyPost.id).to.equal(story.id);
-          expect(storyPost.title).to.equal(story.title);
-          expect(storyPost.user).to.equal(
-            story.user.firstName + " " + story.user.lastName
+        .then(function(writing) {
+          expect(writingPost.id).to.equal(writing.id);
+          expect(writingPost.title).to.equal(writing.title);
+          expect(writingPost.user).to.equal(
+            writing.user.firstName + " " + writing.user.lastName
           );
-          expect(storyPost.content).to.equal(story.content);
+          expect(writingPost.content).to.equal(writing.content);
         });
     });
   });
 
   describe("POST endpoint", function() {
-    it("should add a new post in story", function() {
+    it("should add a new post in writing", function() {
       const newUser = {
         email: faker.internet.email(),
         firstName: faker.name.firstName(),
@@ -135,18 +135,18 @@ describe("Story endpoints", function() {
 
       User.insertMany(newUser);
 
-      const newStory = {
+      const newWriting = {
         title: faker.lorem.sentence(),
         content: faker.lorem.text(),
         // using the user seed data's _id value
         user: newUser.email
       };
 
-      //console.log(newStory);
+      //console.log(newWriting);
       return chai
         .request(app)
-        .post("/api/storys")
-        .send(newStory)
+        .post("/api/writings")
+        .send(newWriting)
         .then(function(post) {
           expect(post).to.have.status(201);
           expect(post).to.be.json;
@@ -154,63 +154,63 @@ describe("Story endpoints", function() {
           expect(post.body).to.include.keys("id", "title", "user", "content");
           // cause Mongo should have created id on insertion
           expect(post.body.id).to.not.be.null;
-          expect(post.body.title).to.equal(newStory.title);
+          expect(post.body.title).to.equal(newWriting.title);
           expect(post.body.user).to.equal(
             `${newUser.firstName} ${newUser.lastName}`
           );
-          expect(post.body.content).to.equal(newStory.content);
-          return Story.findById(post.body.id);
+          expect(post.body.content).to.equal(newWriting.content);
+          return Writing.findById(post.body.id);
         })
-        .then(function(story) {
-          expect(newStory.title).to.equal(story.title);
-          expect(newStory.content).to.equal(story.content);
-          expect(newStory.user).to.equal(story.user.email);
+        .then(function(writing) {
+          expect(newWriting.title).to.equal(writing.title);
+          expect(newWriting.content).to.equal(writing.content);
+          expect(newWriting.user).to.equal(writing.user.email);
         });
     });
   });
 
   describe("PUT endpoint", function() {
-    it("should update fields in story", function() {
+    it("should update fields in writing", function() {
       const updateData = {
         title: "ExampleTitle",
         content: "Example of a bunch of awords"
       };
 
-      return Story.findOne()
-        .then(function(story) {
-          updateData.id = story.id;
+      return Writing.findOne()
+        .then(function(writing) {
+          updateData.id = writing.id;
 
           // make request then inspect it to make sure it reflects
           // data we sent
           return chai
             .request(app)
-            .put(`/api/storys/${story.id}`)
+            .put(`/api/writings/${writing.id}`)
             .send(updateData);
         })
         .then(function(post) {
           expect(post).to.have.status(200);
 
-          return Story.findById(updateData.id);
+          return Writing.findById(updateData.id);
         })
-        .then(function(story) {
-          expect(story.name).to.equal(updateData.name);
-          expect(story.cuisine).to.equal(updateData.cuisine);
+        .then(function(writing) {
+          expect(writing.name).to.equal(updateData.name);
+          expect(writing.cuisine).to.equal(updateData.cuisine);
         });
     });
   });
 
   describe("DELETE endpoint", function() {
-    it("delete a story post by id", function() {
-      let story;
+    it("delete a writing post by id", function() {
+      let writing;
 
-      return Story.findOne()
-        .then(function(_story) {
-          story = _story;
-          return chai.request(app).delete(`/api/storys/${story.id}`);
+      return Writing.findOne()
+        .then(function(_writing) {
+          writing = _writing;
+          return chai.request(app).delete(`/api/writings/${writing.id}`);
         })
         .then(function(post) {
           expect(post).to.have.status(204);
-          return Story.findById(post.id);
+          return Writing.findById(post.id);
         })
         .then(function(_post) {
           expect(_post).to.be.null;

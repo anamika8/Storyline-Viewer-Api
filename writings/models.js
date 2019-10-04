@@ -2,7 +2,7 @@
 
 const mongoose = require("mongoose");
 
-const storySchema = mongoose.Schema({
+const writingSchema = mongoose.Schema({
   title: "string",
   content: "string",
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -10,17 +10,17 @@ const storySchema = mongoose.Schema({
   updated: { type: Date }
 });
 
-storySchema.pre("find", function(next) {
+writingSchema.pre("find", function(next) {
   this.populate("user");
   next();
 });
 
-storySchema.pre("findOne", function(next) {
+writingSchema.pre("findOne", function(next) {
   this.populate("user");
   next();
 });
 
-storySchema.methods.serialize = function() {
+writingSchema.methods.serialize = function() {
   return {
     id: this._id,
     title: this.title,
@@ -31,6 +31,6 @@ storySchema.methods.serialize = function() {
   };
 };
 
-const Story = mongoose.model("Story", storySchema);
+const Writing = mongoose.model("Writing", writingSchema);
 
-module.exports = { Story };
+module.exports = { Writing };

@@ -7,7 +7,7 @@ const passport = require("passport");
 
 const { router: usersRouter } = require("./users");
 const { router: authRouter, localStrategy, jwtStrategy } = require("./auth");
-const { router: storysRouter } = require("./storys");
+const { router: writingsRouter } = require("./writings");
 const { router: commentsRouter } = require("./comments");
 
 // Mongoose internally uses a promise-like object,
@@ -38,7 +38,7 @@ passport.use(jwtStrategy);
 
 app.use("/api/users/", usersRouter);
 app.use("/api/auth/", authRouter);
-app.use("/api/storys/", storysRouter);
+app.use("/api/writings/", writingsRouter);
 app.use("/api/comments/", commentsRouter);
 
 const jwtAuth = passport.authenticate("jwt", { session: false });
