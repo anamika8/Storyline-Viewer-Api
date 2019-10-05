@@ -1,11 +1,11 @@
 language: node_js
 node_js: node
 services:
-- mongodb
+  - mongodb
 deploy:
   provider: heroku
   api_key:
     secure: epFFNvPAQCezfjGh4fqmfld2qxdUsI6S7ddX7txFaCF9t+c+XasuSL8InKI3QFipldgl1nGIN/bPX2ftp8t5iRd3ulNPJwo9TLhVXp9svKhGnJTVjXTwWq7DT9uXhuqgrRguvBo/l1rJ5M4iL4eIehbN5plTjFo3BrqQ6dnTWmwRKLu9W49RfC1pgefNdH/xR63tYJI8CtjLvnrc1X6ISDeKUCYlmclqslKFFfB/lzjVqNwLIvUJ6+N2ry0IqQ3eSkoV2UXbBdEZGcPe0UwCnJZot02tXyH+4uqjQ+iEO7ZwZ7nVjNt1Yl8w6/Odbvr2z+iiugC1stqbn0hwSZdn1DWJmEOQjhZR2hR2wsSQq3LPFJV92W9RtSVCnsuud3F99UjdOHEntNik28SFDZo0kjNX+/7Quth+yJonaAA2NHbcAwtwnnvUXpObrh/Gx74ORlkdG5N2GXUBZ+J25BvpKhhLtYmWxrrNL8tQDH1acNyl7FLTEC8zqIdibNOfZF4SHNq2/NtiyMeJhkeF6ygMCxy2i/zCQ2fN676+4yokTXR1SnovRQKFJjXzuOb6XQwuo3Ljq/2c8Fx18/ML1JKEfpWnnRq5E8307nUDot/EqWF3XXfG6+wakMyWTAmWC0Q6VyrlTOg88g0MvxkeCVPCq7tx4N72NJuh4BqUTSNVoTs=
   app: storyline-viewer-api
   on:
-    repo: anamika8/Storyline-Viewer-Api
+    repo: anamika8/storyline-viewer-api
